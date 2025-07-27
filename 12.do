@@ -121,6 +121,21 @@ bysort idno: egen chld_w_n = sum(co5) if co1 >= 8
 label var chld_w_n "Non-farm child labor (6-14)"
 replace chld_w_n = 0 if chld_w_n ==.
 
+sort idno
+
+* idno ごとに chld_w_f の最大値を一時変数に格納
+bysort idno: egen max_chld_w_f = max(chld_w_f)
+
+* idno ごとに chld_w_n の最大値を一時変数に格納
+bysort idno: egen max_chld_w_n = max(chld_w_n)
+
+* chld_w_f と chld_w_n をこの統一された値で置き換える
+replace chld_w_f = max_chld_w_f
+replace chld_w_n = max_chld_w_n
+
+* 一時変数を削除
+drop max_chld_w_f max_chld_w_n
+
 duplicates drop id, force
 
 keep idno chld_w chld_w_f chld_w_n
